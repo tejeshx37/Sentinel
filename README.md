@@ -27,7 +27,7 @@ However, users often fail financially **not because they lack history**, but bec
 Key challenges:
 - Incomplete or deleted transaction history
 - No real-time sense of financial runway
-- High friction due to bank APIs, KYC, or complex onboarding
+- High friction due to bank APIs, or complex onboarding
 
 Sentinel addresses these by prioritizing **early detection over accounting accuracy**.
 
@@ -162,7 +162,6 @@ The workflow is triggered whenever a **parsed SMS transaction event** is receive
 
 - No bank APIs are used
 - No money is moved or stored
-- No KYC is required
 - SMS parsing is assumed to happen **on-device or externally**
 - Sentinel only consumes **explicitly provided transaction events**
 
@@ -190,7 +189,6 @@ The workflow is triggered whenever a **parsed SMS transaction event** is receive
 ## Limitations & Future Scope
 
 - Bank integrations and Account Aggregator support can be added later
-- KYC required only if payments or lending are introduced
 - Longer history improves confidence but is not mandatory
 - Mobile-first UI and real-time notifications planned
 
