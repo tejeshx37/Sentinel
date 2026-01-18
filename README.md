@@ -1,4 +1,4 @@
-# Sentinel — # Sentinel — Financial Runway Intelligence App
+# Sentinel — Financial Runway Intelligence App
 
 ## Overview
 
