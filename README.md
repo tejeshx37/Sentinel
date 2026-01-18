@@ -115,46 +115,58 @@ This makes the system responsive yet stable.
 
 ## System Architecture
 
-### Event-Driven Backend (n8n)
+## Event-Driven Backend (n8n)
 
-Sentinel’s backend is built using **n8n**, enabling a clean, modular, and event-driven workflow.
+Sentinel uses **n8n** as an event-driven backend to process transaction signals and continuously update a user’s financial runway.
 
-#### Why n8n?
-- Deterministic execution
-- Clear node-level logic
-- Easy visualization for debugging and demos
-- No hidden side effects
+The backend cleanly separates **deterministic financial computation** from **AI-driven interpretation**, ensuring reliability while still leveraging AI where it adds value.
 
 ---
 
 ### n8n Workflow Overview
 
-The workflow is triggered whenever a **parsed SMS transaction event** is received.
+The workflow is triggered whenever a **parsed SMS transaction event** is received (SMS parsing happens externally).
 
-#### Core Nodes:
-1. **SMS Webhook Trigger**
- - Receives structured transaction events (parsed externally)
+**Core Nodes (Execution Order):**
 
-2. **State Initialization**
- - Initializes or loads `effective_balance`
+- **SMS Webhook Trigger**  
+  Receives structured debit/credit events and triggers the workflow.
 
-3. **Transaction Delta Processor**
- - Applies debit/credit deltas to balance
+- **State Initialization**  
+  Initializes the internal `effective_balance` using the user-provided starting balance (no ledger reconstruction).
 
-4. **Declared Burn Rate Calculator**
- - Converts monthly spend → daily rate
+- **Transaction Delta Processor**  
+  Applies event-based balance updates (debit → subtract, credit → add).
 
-5. **Observed Burn Rate Estimator**
- - Estimates burn rate from recent debit events
+- **Declared Burn Rate Calculator**  
+  Converts user-declared monthly spend into a daily burn rate (bootstrap signal).
 
-6. **Burn Rate Blender**
- - Combines declared and observed signals (multimodal fusion)
+- **Observed Burn Rate Estimator (EWMA)**  
+  Estimates spending velocity from real transactions using EWMA to smooth noise and short-term spikes.
 
-7. **DTS & Risk Engine**
- - Computes Days-To-Shortfall and risk level
+- **Burn Rate Blender (Multimodal Fusion)**  
+  Combines declared and observed burn rates using conservative weighted fusion  
+  (ridge-style stabilization).
 
-8. **Confidence & Response Builder**
- - Outputs product-ready response with explanation
+- **DTS & Risk Engine**  
+  Computes Days-To-Shortfall (DTS) and classifies risk as SAFE, WARNING, or CRITICAL.
+
+- **AI Intelligence Layer (Gemini + MCP + MongoDB)**  
+  Interprets deterministic outputs to generate adaptive, human-readable insights.  
+  AI does **not** alter balances or predictions—only explanation and context.
+
+- **Confidence & Response Builder**  
+  Attaches a confidence score and outputs a product-ready response for the app.
+
+---
+
+**Design Principles**
+- No bank APIs or KYC  
+- No ledger reconstruction  
+- Deterministic core logic  
+- AI used only for interpretation and intelligence  
+- Graceful degradation with partial or missing data
+
 
 ---
 
